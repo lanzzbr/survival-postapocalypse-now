@@ -1,0 +1,8 @@
+﻿  Menu.cpp
+  Quale-hook.cpp
+  vars.cpp
+  Generating Code...
+detours.lib(detours.obj) : warning LNK4099: PDB '' was not found with 'detours.lib(detours.obj)' or at ''; linking object as if no debug info
+detours.lib(modules.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(modules.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\detours.pdb'; linking object as if no debug info
+detours.lib(disasm.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(disasm.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\detours.pdb'; linking object as if no debug info
+  quale-hook.vcxproj -> D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\quale-hook.dll

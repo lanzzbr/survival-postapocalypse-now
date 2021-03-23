@@ -19,7 +19,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Quale-hook.cpp" />
+    <ClCompile Include="Third Party\imgui\imgui.cpp" />
+    <ClCompile Include="Third Party\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Third Party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Third Party\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Third Party\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Third Party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="vars.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Hook.h" />
+    <ClInclude Include="includes.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="Third Party\detours.h" />
+    <ClInclude Include="Third Party\imgui\imconfig.h" />
+    <ClInclude Include="Third Party\imgui\imgui.h" />
+    <ClInclude Include="Third Party\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="Third Party\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="Third Party\imgui\imgui_internal.h" />
+    <ClInclude Include="Third Party\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Third Party\imgui\imstb_textedit.h" />
+    <ClInclude Include="Third Party\imgui\imstb_truetype.h" />
+    <ClInclude Include="vars.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -127,6 +150,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
