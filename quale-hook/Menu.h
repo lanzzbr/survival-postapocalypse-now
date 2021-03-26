@@ -5,7 +5,7 @@
 
 class Menu {
 private:
-	ID3D11DeviceContext* context;
+	ID3D11DeviceContext* pContext;
 	ImGuiWindowFlags MenuFlags = 0;
 	ImGuiColorEditFlags ColorEditFlags = 0;
 public:
@@ -15,7 +15,7 @@ public:
 	bool AutoResize = false;
 	bool NoMove = false;
 	bool NoScrollbar = false;
-	bool NoCollapse = false;
+	bool NoCollapse = true;
 	bool NoMenu = true;
 
 	//bools futures
@@ -45,6 +45,6 @@ public:
 	float aim_smooth = 6.f;
 public:
 	Menu();
-	Menu(ID3D11DeviceContext* context);
+	Menu(ID3D11DeviceContext* pContext);
 	void Render();
 };

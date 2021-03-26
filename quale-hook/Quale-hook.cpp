@@ -1,18 +1,109 @@
-#include "Hook.h"
-#include "Menu.h"
+#include "includes.h"
 #include "vars.h"
 
-inline ImFont* pRoboto14;
+typedef HRESULT(__stdcall* D3D11PresentHook) (IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
+typedef HRESULT(__stdcall* D3D11ResizeBuffersHook) (IDXGISwapChain* pSwapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags);
+
+D3D11PresentHook phookD3D11Present = NULL;
+D3D11ResizeBuffersHook phookD3D11ResizeBuffers = NULL;
+
+ID3D11Device* pDevice = NULL;
+ID3D11DeviceContext* pContext = NULL;
 
 DWORD_PTR* pSwapChainVtable = NULL;
 DWORD_PTR* pContextVTable = NULL;
 DWORD_PTR* pDeviceVTable = NULL;
 
-d3d11_present_hook hook_present;
-ID3D11RenderTargetView* render_target_view;
-ID3D11Device* device;
-IDXGISwapChain* swap_chain;
-ID3D11DeviceContext* context;
+ID3D11RenderTargetView* RenderTargetView = NULL;
+
+inline ImFont* pRoboto14;
+const int menu_key = VK_HOME;
+HWND g_hwnd;
+//IFW1Factory* pFW1Factory = NULL;
+//IFW1FontWrapper* pFontWrapper = NULL;
+
+//wndproc
+HWND window = nullptr;
+bool ShowMenu = false;
+static WNDPROC OriginalWndProcHandler = nullptr;
+
+bool firstTime = true;
+
+UINT vps = 1;
+D3D11_VIEWPORT viewport;
+float ScreenCenterX;
+float ScreenCenterY;
+
+HRESULT hr;
+
+bool initOnce = false;
+
+DWORD WINAPI quale_thread(LPVOID lpvReserved) {
+	while (!initOnce) {
+		ImGuiIO& io = ImGui::GetIO();
+
+		HWND hwnd = window;
+
+		POINT mousePosition;
+		GetCursorPos(&mousePosition);
+		ScreenToClient(hwnd, &mousePosition);
+
+		io.MousePos.x = mousePosition.x;
+		io.MousePos.y = mousePosition.y;
+
+		if (GetAsyncKeyState(VK_LBUTTON))
+			io.MouseDown[0] = true;
+		else
+			io.MouseDown[0] = false;
+
+		if (GetAsyncKeyState(menu_key) & 0x1) {
+			vars::quale_menu.isOpen = !(vars::quale_menu.isOpen);
+		}
+	}
+	return NULL;
+}
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK hWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	POINT mPos;
+	GetCursorPos(&mPos);
+	ScreenToClient(window, &mPos);
+	ImGui::GetIO().MousePos.x = mPos.x;
+	ImGui::GetIO().MousePos.y = mPos.y;
+
+	if (uMsg == WM_KEYUP)
+	{
+		if (wParam == VK_INSERT)
+		{
+			if (ShowMenu)
+				io.MouseDrawCursor = true;
+			else
+				io.MouseDrawCursor = false;
+		}
+	}
+
+	if (ShowMenu)
+	{
+		ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+		return true;
+	}
+
+	return CallWindowProc(OriginalWndProcHandler, hWnd, uMsg, wParam, lParam);
+}
+
+HRESULT __stdcall hookD3D11ResizeBuffers(IDXGISwapChain* pSwapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags)
+{
+	ImGui_ImplDX11_InvalidateDeviceObjects();
+	if (nullptr != RenderTargetView) { RenderTargetView->Release(); RenderTargetView = nullptr; }
+
+	HRESULT toReturn = phookD3D11ResizeBuffers(pSwapChain, BufferCount, Width, Height, NewFormat, SwapChainFlags);
+
+	ImGui_ImplDX11_CreateDeviceObjects();
+
+	return toReturn;
+}
 
 void SetupFont() {
 	ImGuiIO& io = ImGui::GetIO();
@@ -21,25 +112,25 @@ void SetupFont() {
 
 void SetupColors() {
 	ImVec4* colors = ImGui::GetStyle().Colors;
-	colors[ImGuiCol_Text] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+	colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.00f);
 	colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 
-	colors[ImGuiCol_WindowBg] = ImVec4(173.f, 138.f, 9.f, 0.83f);
-	colors[ImGuiCol_ChildBg] = ImVec4(1.00f, 0.73f, 0.91f, 0.00f);
-	colors[ImGuiCol_PopupBg] = ImVec4(0.97f, 0.44f, 0.82f, 0.94f);
+	colors[ImGuiCol_WindowBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.70f);
+	colors[ImGuiCol_ChildBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.00f);
+	colors[ImGuiCol_PopupBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.70f);
 
-	colors[ImGuiCol_Border] = ImVec4(0.43f, 0.34f, 0.34f, 0.50f);
-	colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	colors[ImGuiCol_Border] = ImVec4(0.0f, 0.0f, 0.0f, 0.50f);
+	colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 0.00f);
 
-	colors[ImGuiCol_FrameBg] = ImVec4(0.96f, 0.92f, 0.56f, 0.54f);
-	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.97f, 0.94f, 0.69f, 0.40f);
-	colors[ImGuiCol_FrameBgActive] = ImVec4(0.96f, 0.92f, 0.56f, 0.67f);
+	colors[ImGuiCol_FrameBg] = ImVec4(0.5f, 0.5f, 0.5f, 0.54f);
+	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.5f, 0.5f, 0.5f, 0.40f);
+	colors[ImGuiCol_FrameBgActive] = ImVec4(0.5f, 0.5f, 0.5f, 0.67f);
 
-	colors[ImGuiCol_TitleBg] = ImVec4(0.00f, 11.0f, 34.0f, 1.00f);
-	colors[ImGuiCol_TitleBgActive] = ImVec4(0.0f, 11.f, 34.f, 1.00f);
-	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.74f, 0.95f, 1.00f, 1.00f);
+	colors[ImGuiCol_TitleBg] = ImVec4(0.00f, 0.0f, 0.0f, 1.00f);
+	colors[ImGuiCol_TitleBgActive] = ImVec4(0.0f, 0.f, 0.f, 1.00f);
+	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.0f, 0.0f, 0.00f, 1.00f);
 
-	colors[ImGuiCol_MenuBarBg] = ImVec4(1.00f, 0.00f, 0.00f, 0.61f);
+	colors[ImGuiCol_MenuBarBg] = ImVec4(48.f, 48.f, 47.f, 0.61f);
 
 	colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
 	colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.16f, 0.29f, 0.48f, 0.54f);
@@ -51,11 +142,11 @@ void SetupColors() {
 	colors[ImGuiCol_SliderGrab] = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
 	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
 
-	colors[ImGuiCol_Button] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-	colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-	colors[ImGuiCol_ButtonActive] = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
+	colors[ImGuiCol_Button] = ImVec4(0.17f, 0.18f, 0.2f, 1.0f);
+	colors[ImGuiCol_ButtonHovered] = ImVec4(0.6f, 0.67f, 0.71f, 1.0f);
+	colors[ImGuiCol_ButtonActive] = ImVec4(0.6f, 0.67f, 0.71f, 1.0f);
 
-	colors[ImGuiCol_Header] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	colors[ImGuiCol_Header] = ImVec4(0.83f, 0.83f, 0.82f, 0.00f);
 	colors[ImGuiCol_HeaderHovered] = ImVec4(0.74f, 0.95f, 1.00f, 0.80f);
 	colors[ImGuiCol_HeaderActive] = ImVec4(0.74f, 0.95f, 1.00f, 1.00f);
 
@@ -77,51 +168,81 @@ void SetupColors() {
 	colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
 }
 
-HRESULT Hook::hook_d3d11_present(IDXGISwapChain* swap_chain, UINT sync_interval, UINT flags)
+HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 {
-	if (!initonce)
+	if (firstTime)
 	{
-		if (SUCCEEDED(swap_chain->GetDevice(__uuidof(ID3D11Device), (void**)&device))) {
-			swap_chain->GetDevice(__uuidof(device), (void**)&device);
-			device->GetImmediateContext(&context);
-			ImGui::CreateContext();
-			ImGuiIO& io = ImGui::GetIO();
-			io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-			io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+		firstTime = false; //only once
 
-			ImGui::StyleColorsClassic();
-			ImGui_ImplWin32_Init(hWnd);
-			ImGui_ImplDX11_Init(device, context);
-			ImGui_ImplDX11_CreateDeviceObjects();
-			SetupFont();
-			SetupColors();
-			vars::quale_menu = Menu(context);
-			vars::quale_menu = Menu(context);
-			initonce = true;
+		//get device
+		if (SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**)&pDevice)))
+		{
+			//SwapChain = pSwapChain;
+			pSwapChain->GetDevice(__uuidof(pDevice), (void**)&pDevice);
+			pDevice->GetImmediateContext(&pContext);
 		}
-		else
-			return hook_present(swap_chain, sync_interval, flags);
+		//HRESULT createFont = FW1CreateFactory(FW1_VERSION, &pFW1Factory);
+		//createFont = pFW1Factory->CreateFontWrapper(pDevice, L"Courier", &pFontWrapper);
+		//pFW1Factory->Release();
+
+		//imgui
+		DXGI_SWAP_CHAIN_DESC sd;
+		pSwapChain->GetDesc(&sd);
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantTextInput || ImGui::GetIO().WantCaptureKeyboard; //control menu with mouse
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+		window = sd.OutputWindow;
+
+		//wndprochandler
+		OriginalWndProcHandler = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)hWndProc);
+
+		ImGui_ImplWin32_Init(window);
+		ImGui_ImplDX11_Init(pDevice, pContext);
+		SetupFont();
+		ImGui_ImplDX11_CreateDeviceObjects();
+		SetupColors();
+		//vars::quale_menu = Menu(pContext);
+		CreateThread(NULL, 0, quale_thread, NULL, 0, NULL);
+		ImGui::GetIO().ImeWindowHandle = window;
 	}
 
-	ImGuiIO io = ImGui::GetIO();
+	if (RenderTargetView == NULL)
+	{
+		pContext->RSGetViewports(&vps, &viewport);
+		ScreenCenterX = viewport.Width / 2.0f;
+		ScreenCenterY = viewport.Height / 2.0f;
+		ID3D11Texture2D* backbuffer = NULL;
+		hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backbuffer);
 
-	ImGui_ImplDX11_NewFrame();
+		hr = pDevice->CreateRenderTargetView(backbuffer, NULL, &RenderTargetView);
+		backbuffer->Release();
+	}
+	else
+		pContext->OMSetRenderTargets(1, &RenderTargetView, NULL);
+	if (GetAsyncKeyState(VK_INSERT) & 1)
+	{
+		vars::quale_menu.isOpen = !(vars::quale_menu.isOpen);
+	}
+
+	//imgui
 	ImGui_ImplWin32_NewFrame();
+	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
-	//pMenu->Render();
-	ImGui::EndFrame();
+	//ImGui::GetStyle().WindowRounding = 0.0f;
+
+	vars::quale_menu.Render();
+	
+	//ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	return hook_present(swap_chain, sync_interval, flags);
+
+	return phookD3D11Present(pSwapChain, SyncInterval, Flags);
 }
 
-LRESULT CALLBACK Hook::DXGIMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
-}
-
-const int MultisampleCount = 1;
-
-DWORD __stdcall Init(LPVOID)
+const int MultisampleCount = 1; // Set to 1 to disable multisampling
+LRESULT CALLBACK DXGIMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) { return DefWindowProc(hwnd, uMsg, wParam, lParam); }
+DWORD __stdcall InitHooks(LPVOID)
 {
 	HMODULE hDXGIDLL = 0;
 	do
@@ -133,7 +254,7 @@ DWORD __stdcall Init(LPVOID)
 
 	IDXGISwapChain* pSwapChain;
 
-	WNDCLASSEXA wc = { sizeof(WNDCLASSEX), CS_CLASSDC, Hook::DXGIMsgProc, 0L, 0L, GetModuleHandleA(NULL), NULL, NULL, NULL, NULL, "DX", NULL };
+	WNDCLASSEXA wc = { sizeof(WNDCLASSEX), CS_CLASSDC, DXGIMsgProc, 0L, 0L, GetModuleHandleA(NULL), NULL, NULL, NULL, NULL, "DX", NULL };
 	RegisterClassExA(&wc);
 	HWND hWnd = CreateWindowA("DX", NULL, WS_OVERLAPPEDWINDOW, 100, 100, 300, 300, NULL, NULL, wc.hInstance, NULL);
 
@@ -177,42 +298,44 @@ DWORD __stdcall Init(LPVOID)
 		sizeof(requestedLevels) / sizeof(D3D_FEATURE_LEVEL),
 		D3D11_SDK_VERSION,
 		&scd,
-		&swap_chain,
-		&device,
+		&pSwapChain,
+		&pDevice,
 		&obtainedLevel,
-		&context)))
+		&pContext)))
 	{
 		MessageBox(hWnd, L"Failed to create directX device and swapchain!", L"Error", MB_ICONERROR);
 		return NULL;
 	}
 
 
-	pSwapChainVtable = (DWORD_PTR*)swap_chain;
+	pSwapChainVtable = (DWORD_PTR*)pSwapChain;
 	pSwapChainVtable = (DWORD_PTR*)pSwapChainVtable[0];
 
-	pContextVTable = (DWORD_PTR*)context;
+	pContextVTable = (DWORD_PTR*)pContext;
 	pContextVTable = (DWORD_PTR*)pContextVTable[0];
 
-	pDeviceVTable = (DWORD_PTR*)device;
+	pDeviceVTable = (DWORD_PTR*)pDevice;
 	pDeviceVTable = (DWORD_PTR*)pDeviceVTable[0];
 
-	hook_present = (d3d11_present_hook)(DWORD_PTR*)pSwapChainVtable[8];
-	
+	phookD3D11Present = (D3D11PresentHook)(DWORD_PTR*)pSwapChainVtable[8];
+	phookD3D11ResizeBuffers = (D3D11ResizeBuffersHook)(DWORD_PTR*)pSwapChainVtable[13];
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
-	DetourAttach(&(LPVOID&)hook_present, (PBYTE)Hook::hook_d3d11_present);
+	DetourAttach(&(LPVOID&)phookD3D11Present, (PBYTE)hookD3D11Present);
+	DetourAttach(&(LPVOID&)phookD3D11ResizeBuffers, (PBYTE)hookD3D11ResizeBuffers);
+	//DetourAttach(&(LPVOID&)phookD3D11CreateQuery, (PBYTE)hookD3D11CreateQuery);
 	DetourTransactionCommit();
 
 	DWORD dwOld;
-	VirtualProtect(hook_present, 2, PAGE_EXECUTE_READWRITE, &dwOld);
+	VirtualProtect(phookD3D11Present, 2, PAGE_EXECUTE_READWRITE, &dwOld);
 
 	while (true) {
 		Sleep(10);
 	}
 
-	device->Release();
-	context->Release();
+	pDevice->Release();
+	pContext->Release();
 	pSwapChain->Release();
 
 	return NULL;
@@ -224,13 +347,14 @@ BOOL __stdcall DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved)
 	{
 	case DLL_PROCESS_ATTACH: // A process is loading the DLL.
 		DisableThreadLibraryCalls(hModule);
-		CreateThread(NULL, 0, Init, NULL, 0, NULL);
+		CreateThread(NULL, 0, InitHooks, NULL, 0, NULL);
 		break;
 
 	case DLL_PROCESS_DETACH: // A process unloads the DLL.
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(LPVOID&)hook_present, (PBYTE)Hook::hook_d3d11_present);
+		DetourDetach(&(LPVOID&)phookD3D11Present, (PBYTE)hookD3D11Present);
+		DetourDetach(&(LPVOID&)phookD3D11ResizeBuffers, (PBYTE)hookD3D11ResizeBuffers);
 		DetourTransactionCommit();
 		break;
 	}

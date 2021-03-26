@@ -2,11 +2,12 @@
 #include "vars.h"
 Menu::Menu()
 {
-
 }
 
-Menu::Menu(ID3D11DeviceContext* context) {
-	this->context = context;
+static int switchTabs = 5;
+
+void Menu::Render() {
+
 	if (NoTitlebar)		MenuFlags |= ImGuiWindowFlags_NoTitleBar;
 	if (NoResize)		MenuFlags |= ImGuiWindowFlags_NoResize;
 	if (AutoResize)		MenuFlags |= ImGuiWindowFlags_AlwaysAutoResize;
@@ -19,12 +20,9 @@ Menu::Menu(ID3D11DeviceContext* context) {
 	ColorEditFlags |= ImGuiColorEditFlags_NoInputs;
 	ColorEditFlags |= ImGuiColorEditFlags_PickerHueBar;
 	ColorEditFlags |= ImGuiColorEditFlags_Uint8;
-}
-
-static int switchTabs = 5;
-
-void Menu::Render() {
-	ImGui::Begin("graphics-hook", &isOpen, MenuFlags);
+	ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
+	ImGui::GetStyle().WindowRounding = 0.0f;
+	ImGui::Begin("quale-hook", &isOpen, MenuFlags);
 
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.65f);
 	ImGui::PushItemWidth(140);
