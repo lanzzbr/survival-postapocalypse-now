@@ -36,6 +36,7 @@ public:
 	float c_dead_loot_box[4] = { 0.086f, 0.549f, 0.882f, 1.f };
 	float c_vaz2101[4] = { 0.614f, 0.848f, 0.397f, 1.f };
 	float c_grenade[4] = { 0.614f, 0.848f, 0.397f, 1.f };
+	float c_player[4] = { 255, 0, 0, 255 };
 
 	//Misc shit
 	float fov = 0.f;

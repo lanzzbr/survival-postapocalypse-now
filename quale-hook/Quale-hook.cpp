@@ -1,5 +1,6 @@
 #include "includes.h"
 #include "vars.h"
+#include "ESP.h"
 
 typedef HRESULT(__stdcall* D3D11PresentHook) (IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
 typedef HRESULT(__stdcall* D3D11ResizeBuffersHook) (IDXGISwapChain* pSwapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags);
@@ -21,7 +22,7 @@ const int menu_key = VK_HOME;
 HWND g_hwnd;
 //IFW1Factory* pFW1Factory = NULL;
 //IFW1FontWrapper* pFontWrapper = NULL;
-
+ESP esp = ESP();
 //wndproc
 HWND window = nullptr;
 bool ShowMenu = false;
@@ -59,6 +60,7 @@ DWORD WINAPI quale_thread(LPVOID lpvReserved) {
 		if (GetAsyncKeyState(menu_key) & 0x1) {
 			vars::quale_menu.isOpen = !(vars::quale_menu.isOpen);
 		}
+		
 	}
 	return NULL;
 }
@@ -107,7 +109,7 @@ HRESULT __stdcall hookD3D11ResizeBuffers(IDXGISwapChain* pSwapChain, UINT Buffer
 
 void SetupFont() {
 	ImGuiIO& io = ImGui::GetIO();
-	pRoboto14 = ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\WINDOWS\\FONTS\\impact.ttf", 16.0f, NULL, ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
+	pRoboto14 = ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\WINDOWS\\FONTS\\Verdana.ttf", 16.0f, NULL, ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
 }
 
 void SetupColors() {
@@ -203,6 +205,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 		ImGui_ImplDX11_CreateDeviceObjects();
 		SetupColors();
 		//vars::quale_menu = Menu(pContext);
+		esp = ESP();
 		CreateThread(NULL, 0, quale_thread, NULL, 0, NULL);
 		ImGui::GetIO().ImeWindowHandle = window;
 	}
@@ -220,10 +223,6 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 	}
 	else
 		pContext->OMSetRenderTargets(1, &RenderTargetView, NULL);
-	if (GetAsyncKeyState(VK_INSERT) & 1)
-	{
-		vars::quale_menu.isOpen = !(vars::quale_menu.isOpen);
-	}
 
 	//imgui
 	ImGui_ImplWin32_NewFrame();
@@ -232,7 +231,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 	//ImGui::GetStyle().WindowRounding = 0.0f;
 
 	vars::quale_menu.Render();
-	
+	esp.Render();
 	//ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
