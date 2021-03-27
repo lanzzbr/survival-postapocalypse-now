@@ -60,7 +60,7 @@ void Menu::Render() {
 			ImGui::Checkbox("ADMINS", &vars::quale_menu.admin_esp);
 			ImGui::Checkbox("AIR DROP", &vars::quale_menu.air_drop);
 			ImGui::Checkbox("DEAD BOX LOOT", &vars::quale_menu.dead_loot_box);
-			ImGui::Checkbox("Car", &vars::quale_menu.vaz2101);
+			ImGui::Checkbox("Car", &vars::quale_menu.cars);
 			ImGui::Checkbox("GRENADE", &vars::quale_menu.grenade_esp);
 			ImGui::Checkbox("LOOT", &vars::quale_menu.loot_esp);
 			ImGui::Checkbox("ARRAY", &vars::quale_menu.array_actor);
@@ -74,7 +74,8 @@ void Menu::Render() {
 			ImGui::ColorEdit4("PLAYERS", vars::quale_menu.c_player);
 			ImGui::ColorEdit4("AIR DROP", vars::quale_menu.c_air_drop);
 			ImGui::ColorEdit4("DEAD BOX LOOT", vars::quale_menu.c_dead_loot_box);
-			ImGui::ColorEdit4("Car", vars::quale_menu.c_vaz2101);
+			ImGui::ColorEdit4("Car", vars::quale_menu.c_cars);
+			ImGui::ColorEdit4("Grenade", vars::quale_menu.c_grenade);
 			break;
 		}
 		ImGui::End();

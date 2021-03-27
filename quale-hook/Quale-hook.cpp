@@ -23,6 +23,11 @@ HWND g_hwnd;
 //IFW1Factory* pFW1Factory = NULL;
 //IFW1FontWrapper* pFontWrapper = NULL;
 ESP esp = ESP();
+DeadLootBoxESP dead_loot_box = DeadLootBoxESP();
+Admin admin = Admin();
+Cars cars = Cars();
+Grenade grenade = Grenade();
+AirDrop airdrop = AirDrop();
 //wndproc
 HWND window = nullptr;
 bool ShowMenu = false;
@@ -60,7 +65,55 @@ DWORD WINAPI quale_thread(LPVOID lpvReserved) {
 		if (GetAsyncKeyState(menu_key) & 0x1) {
 			vars::quale_menu.isOpen = !(vars::quale_menu.isOpen);
 		}
+
+		if (vars::quale_menu.player_esp)
+		{
+			esp.toggled = true;
+		}
+		else {
+			esp.toggled = false;
+		}
+
+		if (vars::quale_menu.dead_loot_box)
+		{
+			dead_loot_box.toggled = true;
+		}
+		else {
+			dead_loot_box.toggled = false;
+		}
 		
+		if (vars::quale_menu.admin_esp)
+		{
+			admin.toggled = true;
+		}
+		else
+		{
+			admin.toggled = false;
+		}
+
+		if (vars::quale_menu.cars)
+		{
+			cars.toggled = true;
+		}
+		else {
+			cars.toggled = false;
+		}
+
+		if (vars::quale_menu.grenade_esp)
+		{
+			grenade.toggled = true;
+		}
+		else {
+			grenade.toggled = false;
+		}
+
+		if (vars::quale_menu.air_drop)
+		{
+			airdrop.toggled = true;
+		}
+		else {
+			airdrop.toggled = false;
+		}
 	}
 	return NULL;
 }
@@ -206,6 +259,11 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 		SetupColors();
 		//vars::quale_menu = Menu(pContext);
 		esp = ESP();
+		dead_loot_box = DeadLootBoxESP();
+		admin = Admin();
+		cars = Cars();
+		grenade = Grenade();
+		airdrop = AirDrop();
 		CreateThread(NULL, 0, quale_thread, NULL, 0, NULL);
 		ImGui::GetIO().ImeWindowHandle = window;
 	}
@@ -232,6 +290,11 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 
 	vars::quale_menu.Render();
 	esp.Render();
+	dead_loot_box.Render();
+	admin.Render();
+	cars.Render();
+	grenade.Render();
+	airdrop.Render();
 	//ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
