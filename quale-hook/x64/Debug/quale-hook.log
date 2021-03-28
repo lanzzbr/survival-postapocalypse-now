@@ -1,7 +1,11 @@
 ﻿  ESP.cpp
+  Menu.cpp
   Quale-hook.cpp
+D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(312,41): error C2664: 'HMODULE GetModuleHandleA(LPCSTR)': cannot convert argument 1 from 'const wchar_t [9]' to 'LPCSTR'
+D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(312,30): message : Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\libloaderapi.h(260,1): message : see declaration of 'GetModuleHandleA'
+D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(368,93): error C2664: 'int MessageBoxA(HWND,LPCSTR,LPCSTR,UINT)': cannot convert argument 2 from 'const wchar_t [47]' to 'LPCSTR'
+D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(368,20): message : Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winuser.h(9153,1): message : see declaration of 'MessageBoxA'
+  vars.cpp
   Generating Code...
-detours.lib(detours.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(detours.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\detours.pdb'; linking object as if no debug info
-detours.lib(modules.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(modules.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\detours.pdb'; linking object as if no debug info
-detours.lib(disasm.obj) : warning LNK4099: PDB '' was not found with 'detours.lib(disasm.obj)' or at ''; linking object as if no debug info
-  quale-hook.vcxproj -> D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\quale-hook.dll

@@ -538,8 +538,8 @@ void Grenade::Render()
 		{
 			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
 			{
-				float* c_air_drop = vars::quale_menu.c_air_drop;
-				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_air_drop[0], c_air_drop[1], c_air_drop[2], c_air_drop[3]), "Grenade");
+				float* c_grenade = vars::quale_menu.c_grenade;
+				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_grenade[0], c_grenade[1], c_grenade[2], c_grenade[3]), "Grenade");
 			}
 		}
 	}
