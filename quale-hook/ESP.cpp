@@ -81,6 +81,14 @@ void ESP::Render()
 	ViewportWidth = io.DisplaySize.x;
 	ViewportHeight = io.DisplaySize.y;
 
+	//change fov function
+	player_controller->STATIC_FOV(vars::quale_menu.fov);
+	//Set name function
+	if (vars::quale_menu.spoof_name)
+	{
+		CG::FString string(vars::quale_menu.string);
+		player_controller->STATIC_SetName(string);
+	}
 
 	CG::FVector2D screen;
 
@@ -146,8 +154,8 @@ void ESP::Render()
 				continue;
 			const auto cameraLoc = camera->CameraCache.POV.Location;
 			const auto cameraRot = camera->CameraCache.POV.Rotation;
-
-			CG::FVector playerLoc = actor->RootComponent->RelativeLocation;
+			CG::FVector addPos(0, 0, 35);
+			CG::FVector playerLoc = addPos + actor->RootComponent->RelativeLocation;
 			float dist = DistTo(root_component->RelativeLocation, playerLoc);
 			CG::UKismetMathLibrary* gMath = (CG::UKismetMathLibrary*)CG::UGameplayStatics::StaticClass();
 			CG::FRotator rotationDelta = gMath->NormalizedDeltaRotator(gMath->FindLookAtRotation(cameraLoc, playerLoc), cameraRot);
@@ -614,3 +622,4 @@ void AirDrop::Render()
 		}
 	}
 }
+

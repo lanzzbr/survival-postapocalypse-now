@@ -20,7 +20,7 @@ void Menu::Render() {
 	ColorEditFlags |= ImGuiColorEditFlags_NoInputs;
 	ColorEditFlags |= ImGuiColorEditFlags_PickerHueBar;
 	ColorEditFlags |= ImGuiColorEditFlags_Uint8;
-	ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiCond_FirstUseEver);
 	ImGui::GetStyle().WindowRounding = 0.0f;
 	if (isOpen)
 	{
@@ -60,10 +60,8 @@ void Menu::Render() {
 			ImGui::Checkbox("ADMINS", &vars::quale_menu.admin_esp);
 			ImGui::Checkbox("AIR DROP", &vars::quale_menu.air_drop);
 			ImGui::Checkbox("DEAD BOX LOOT", &vars::quale_menu.dead_loot_box);
-			ImGui::Checkbox("Car", &vars::quale_menu.cars);
+			ImGui::Checkbox("CAR", &vars::quale_menu.cars);
 			ImGui::Checkbox("GRENADE", &vars::quale_menu.grenade_esp);
-			ImGui::Checkbox("LOOT", &vars::quale_menu.loot_esp);
-			ImGui::Checkbox("ARRAY", &vars::quale_menu.array_actor);
 			break;
 		case 2:
 			ImGui::SliderFloat("FOV", &vars::quale_menu.fov, 0.f, 170.f);
@@ -74,8 +72,8 @@ void Menu::Render() {
 			ImGui::ColorEdit4("PLAYERS", vars::quale_menu.c_player);
 			ImGui::ColorEdit4("AIR DROP", vars::quale_menu.c_air_drop);
 			ImGui::ColorEdit4("DEAD BOX LOOT", vars::quale_menu.c_dead_loot_box);
-			ImGui::ColorEdit4("Car", vars::quale_menu.c_cars);
-			ImGui::ColorEdit4("Grenade", vars::quale_menu.c_grenade);
+			ImGui::ColorEdit4("CAR", vars::quale_menu.c_cars);
+			ImGui::ColorEdit4("GRENADE", vars::quale_menu.c_grenade);
 			break;
 		}
 		ImGui::End();
