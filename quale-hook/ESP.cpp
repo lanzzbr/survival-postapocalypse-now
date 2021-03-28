@@ -2,6 +2,10 @@
 #include "vars.h"
 #include "Offsets.h"
 
+#pragma warning(disable : 4996)
+
+const int AimKey = VK_RBUTTON;
+
 void get_offsets_for_esp()
 {
 	uintptr_t base_address = (reinterpret_cast<uintptr_t>(GetModuleHandleA(nullptr)));
@@ -64,6 +68,20 @@ void ESP::Render()
 	if ((root_component) == nullptr)
 		return;
 
+	auto* controller = acknowledged_pawn->Controller;
+	if ((controller) == nullptr)
+		return;
+	auto character = controller->Character;
+	if ((character) == nullptr)
+		return;
+
+	float ViewportWidth;
+	float ViewportHeight;
+	ImGuiIO io = ImGui::GetIO();
+	ViewportWidth = io.DisplaySize.x;
+	ViewportHeight = io.DisplaySize.y;
+
+
 	CG::FVector2D screen;
 
 	CG::TArray<CG::AActor*> AActors = gh::m_persistence_level->AActors;
@@ -82,6 +100,18 @@ void ESP::Render()
 		float calculate_distnace = distance / 100;
 
 		CG::ACv2_Character_Survival_C* pawn = static_cast<CG::ACv2_Character_Survival_C*>(actor);
+
+		static struct
+		{
+			CG::AActor* target = nullptr;
+			CG::FVector location;
+			CG::FRotator delta;
+			float best = FLT_MAX;
+			float smoothness = 1.f;
+		}aimBest;
+
+		aimBest.target = nullptr;
+		aimBest.best = FLT_MAX;
 
 		if (strstr(get_name, "Cv2_Character_Survival_C"))
 		{
@@ -104,6 +134,50 @@ void ESP::Render()
 				float* c_player_esp = vars::quale_menu.c_player;
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), name);
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 15), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), std::to_string((int)(calculate_distnace)).c_str());
+			}
+
+			float fYaw = vars::quale_menu.aim_fov;
+			float fPitch = vars::quale_menu.aim_fov;
+			float fSmoothness = vars::quale_menu.aim_smooth;
+
+			auto localLoc = character->K2_GetActorLocation();
+			auto const camera = player_controller->PlayerCameraManager;
+			if ((camera) == nullptr)
+				continue;
+			const auto cameraLoc = camera->CameraCache.POV.Location;
+			const auto cameraRot = camera->CameraCache.POV.Rotation;
+
+			CG::FVector playerLoc = actor->RootComponent->RelativeLocation;
+			float dist = DistTo(root_component->RelativeLocation, playerLoc);
+			CG::UKismetMathLibrary* gMath = (CG::UKismetMathLibrary*)CG::UGameplayStatics::StaticClass();
+			CG::FRotator rotationDelta = gMath->NormalizedDeltaRotator(gMath->FindLookAtRotation(cameraLoc, playerLoc), cameraRot);
+
+			float absYaw = abs(rotationDelta.Yaw);
+			float absPitch = abs(rotationDelta.Pitch);
+			if (absYaw > fYaw || absPitch > fPitch) { continue; }
+			float sum = absYaw + absPitch;
+			if (sum < aimBest.best)
+			{
+				aimBest.target = actor;
+				aimBest.location = playerLoc;
+				aimBest.delta = rotationDelta;
+				aimBest.best = sum;
+				aimBest.smoothness = fSmoothness;
+			}
+
+			if (player_controller->ProjectWorldLocationToScreen(aimBest.location, &screen, false))
+			{
+				auto col = ImGui::GetColorU32(IM_COL32(0, 200, 0, 255));
+				ImGui::GetBackgroundDrawList()->AddLine({ io.DisplaySize.x * 0.5f , io.DisplaySize.y * 0.5f }, { screen.X, screen.Y }, col);
+				ImGui::GetBackgroundDrawList()->AddCircle({ screen.X, screen.Y }, 3.f, col);
+			}
+
+			if (GetAsyncKeyState(AimKey))
+			{
+				aimBest.delta = gMath->NormalizedDeltaRotator(gMath->FindLookAtRotation(cameraLoc, aimBest.location), cameraRot);
+				auto smoothness = 1.f / aimBest.smoothness;
+				player_controller->STATIC_AddYawInput(aimBest.delta.Yaw * smoothness);
+				player_controller->STATIC_AddPitchInput(aimBest.delta.Pitch * -smoothness);
 			}
 		}
 	}

@@ -32,12 +32,12 @@ public:
 
 
 	//color variables
-	float c_air_drop[4] = { 0.992f, 0.f, 0.f, 1.f };
-	float c_dead_loot_box[4] = { 255, 0, 0, 255 };
-	float c_cars[4] = { 255, 0, 0, 255 };
-	float c_grenade[4] = { 255, 0, 0, 255 };
-	float c_player[4] = { 255, 0, 0, 255 };
-	float c_admin[4] = { 255, 0, 0, 255 };
+	float c_air_drop[4] = { 255, 0, 0, 255 };
+	float c_dead_loot_box[4] = { 52, 235, 235, 255 };
+	float c_cars[4] = { 149, 52, 235, 255 };
+	float c_grenade[4] = { 21, 230, 80, 255 };
+	float c_player[4] = { 247, 255, 5, 255 };
+	float c_admin[4] = { 255, 5, 5, 255 };
 
 
 	//Misc shit

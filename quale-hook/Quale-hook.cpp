@@ -37,8 +37,8 @@ bool firstTime = true;
 
 UINT vps = 1;
 D3D11_VIEWPORT viewport;
-float ScreenCenterX;
-float ScreenCenterY;
+float ScreenCenterXx;
+float ScreenCenterYx;
 
 HRESULT hr;
 
@@ -271,8 +271,8 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 	if (RenderTargetView == NULL)
 	{
 		pContext->RSGetViewports(&vps, &viewport);
-		ScreenCenterX = viewport.Width / 2.0f;
-		ScreenCenterY = viewport.Height / 2.0f;
+		ScreenCenterXx = viewport.Width / 2.0f;
+		ScreenCenterYx = viewport.Height / 2.0f;
 		ID3D11Texture2D* backbuffer = NULL;
 		hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backbuffer);
 
