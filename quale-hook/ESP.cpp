@@ -142,6 +142,11 @@ void ESP::Render()
 				float* c_player_esp = vars::quale_menu.c_player;
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), name);
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 15), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), std::to_string((int)(calculate_distnace)).c_str());
+				//PlayerController->LineOfSightTo(actor, FVector(), false)
+				if (!player_controller->LineOfSightTo(actor, CG::FVector(), false))
+				{
+					ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 35), ImColor(255, 0, 0, 255), "CAN'T SEE");
+				}
 			}
 
 			float fYaw = vars::quale_menu.aim_fov;
