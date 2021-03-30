@@ -54,6 +54,7 @@ void Menu::Render() {
 		case 0:
 			ImGui::SliderFloat("AIMBOT FOV", &vars::quale_menu.aim_fov, 0.f, 15.f);
 			ImGui::SliderFloat("AIM SMOOTH", &vars::quale_menu.aim_smooth, 2.f, 30.f);
+			ImGui::Checkbox("VISIBLE", &vars::quale_menu.visible);
 			break;
 		case 1:
 			ImGui::Checkbox("PLAYER", &vars::quale_menu.player_esp);

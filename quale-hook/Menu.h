@@ -29,6 +29,7 @@ public:
 	bool grenade_esp = false;
 	bool loot_esp = false;
 	bool array_actor = false;
+	bool visible = false;
 
 
 	//color variables

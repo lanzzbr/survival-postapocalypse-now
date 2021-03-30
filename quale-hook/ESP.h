@@ -44,4 +44,3 @@ public:
 	bool toggled = false;
 	void Render();
 };
-
