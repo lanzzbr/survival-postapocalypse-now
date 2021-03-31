@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "includes.h"
 #include "Third Party/imgui/imgui.h"
 #include <string>
@@ -43,7 +43,7 @@ public:
 
 	//Misc shit
 	float fov = 0.f;
-	const wchar_t string[32] = L" ";
+	const wchar_t string[32] = L"Mantos";
 
 	float aim_fov = 2.f;
 	float aim_smooth = 6.f;

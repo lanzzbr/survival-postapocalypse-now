@@ -20,8 +20,6 @@ ID3D11RenderTargetView* RenderTargetView = NULL;
 inline ImFont* pRoboto14;
 const int menu_key = VK_HOME;
 HWND g_hwnd;
-//IFW1Factory* pFW1Factory = NULL;
-//IFW1FontWrapper* pFontWrapper = NULL;
 ESP esp = ESP();
 DeadLootBoxESP dead_loot_box = DeadLootBoxESP();
 Admin admin = Admin();
@@ -236,20 +234,16 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 			pSwapChain->GetDevice(__uuidof(pDevice), (void**)&pDevice);
 			pDevice->GetImmediateContext(&pContext);
 		}
-		//HRESULT createFont = FW1CreateFactory(FW1_VERSION, &pFW1Factory);
-		//createFont = pFW1Factory->CreateFontWrapper(pDevice, L"Courier", &pFontWrapper);
-		//pFW1Factory->Release();
 
 		//imgui
 		DXGI_SWAP_CHAIN_DESC sd;
 		pSwapChain->GetDesc(&sd);
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantTextInput || ImGui::GetIO().WantCaptureKeyboard; //control menu with mouse
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+		ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantTextInput || ImGui::GetIO().WantCaptureKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		window = sd.OutputWindow;
 
-		//wndprochandler
 		OriginalWndProcHandler = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)hWndProc);
 
 		ImGui_ImplWin32_Init(window);
@@ -257,7 +251,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 		SetupFont();
 		ImGui_ImplDX11_CreateDeviceObjects();
 		SetupColors();
-		//vars::quale_menu = Menu(pContext);
+
 		esp = ESP();
 		dead_loot_box = DeadLootBoxESP();
 		admin = Admin();
@@ -286,7 +280,6 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
-	//ImGui::GetStyle().WindowRounding = 0.0f;
 
 	vars::quale_menu.Render();
 	esp.Render();
@@ -295,14 +288,14 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 	cars.Render();
 	grenade.Render();
 	airdrop.Render();
-	//ImGui::EndFrame();
+
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	return phookD3D11Present(pSwapChain, SyncInterval, Flags);
 }
 
-const int MultisampleCount = 1; // Set to 1 to disable multisampling
+const int MultisampleCount = 1;
 LRESULT CALLBACK DXGIMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) { return DefWindowProc(hwnd, uMsg, wParam, lParam); }
 DWORD __stdcall InitHooks(LPVOID)
 {
@@ -386,7 +379,6 @@ DWORD __stdcall InitHooks(LPVOID)
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach(&(LPVOID&)phookD3D11Present, (PBYTE)hookD3D11Present);
 	DetourAttach(&(LPVOID&)phookD3D11ResizeBuffers, (PBYTE)hookD3D11ResizeBuffers);
-	//DetourAttach(&(LPVOID&)phookD3D11CreateQuery, (PBYTE)hookD3D11CreateQuery);
 	DetourTransactionCommit();
 
 	DWORD dwOld;
@@ -407,12 +399,12 @@ BOOL __stdcall DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved)
 {
 	switch (dwReason)
 	{
-	case DLL_PROCESS_ATTACH: // A process is loading the DLL.
+	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hModule);
 		CreateThread(NULL, 0, InitHooks, NULL, 0, NULL);
 		break;
 
-	case DLL_PROCESS_DETACH: // A process unloads the DLL.
+	case DLL_PROCESS_DETACH:
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(LPVOID&)phookD3D11Present, (PBYTE)hookD3D11Present);

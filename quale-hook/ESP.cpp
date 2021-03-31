@@ -1,6 +1,7 @@
 #include "ESP.h"
 #include "vars.h"
 #include "Offsets.h"
+#include <comdef.h>
 
 #pragma warning(disable : 4996)
 
@@ -134,18 +135,18 @@ void ESP::Render()
 				continue;
 
 			const wchar_t* get_player_name = get_player_state->PlayerName.c_str();
-			char name[32];
-			std::wcstombs(name, get_player_name, 32);
 			
+			_bstr_t b(get_player_name);
+			const char* c = b;
 			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
 			{
 				float* c_player_esp = vars::quale_menu.c_player;
-				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), name);
+				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), c);
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 15), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), std::to_string((int)(calculate_distnace)).c_str());
 				
 				if (!player_controller->LineOfSightTo(actor, CG::FVector(), false))
 				{
-					ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 35), ImColor(255, 0, 0, 255), "CAN'T SEE");
+					ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 35), ImColor(255, 0, 0, 255), "behind the wall");
 				}
 			}
 
@@ -556,8 +557,6 @@ void Grenade::Render()
 			continue;
 
 		const char* get_name = actor->Name.GetName();
-
-		CG::ACv2_Character_Survival_C* pawn = static_cast<CG::ACv2_Character_Survival_C*>(actor);
 
 		if (strstr(get_name, "Cv2_ProjectileBase_C"))
 		{
