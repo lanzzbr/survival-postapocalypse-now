@@ -1,13 +1,14 @@
-﻿  Quale-hook.cpp
+﻿  ESP.cpp
+  Quale-hook.cpp
 D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(55,32): warning C4244: '=': conversion from 'LONG' to 'float', possible loss of data
 D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(56,32): warning C4244: '=': conversion from 'LONG' to 'float', possible loss of data
 D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(126,34): warning C4244: '=': conversion from 'LONG' to 'float', possible loss of data
 D:\GitHub\survival-postapocalypse-now\quale-hook\Quale-hook.cpp(127,34): warning C4244: '=': conversion from 'LONG' to 'float', possible loss of data
 LINK : warning LNK4044: unrecognized option '/Zc:threadSafeInit-'; ignored
   Generating code
-  2 of 1304 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  1 of 1304 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    18 functions had inline decision re-evaluated but remain unchanged
+    25 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 detours.lib(detours.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(detours.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Release\detours.pdb'; linking object as if no debug info
 detours.lib(modules.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(modules.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Release\detours.pdb'; linking object as if no debug info

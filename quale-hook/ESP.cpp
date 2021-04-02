@@ -81,7 +81,16 @@ void ESP::Render()
 	ImGuiIO io = ImGui::GetIO();
 	ViewportWidth = io.DisplaySize.x;
 	ViewportHeight = io.DisplaySize.y;
-
+	auto my_pawn = player_controller->Pawn;
+	if ((my_pawn) == nullptr)
+		return;
+	auto my_player_state = my_pawn->PlayerState;
+	if ((my_player_state) == nullptr)
+		return;
+	auto my_ping = my_player_state->Ping;
+	
+	ImGui::GetBackgroundDrawList()->AddText(ImVec2(350, 150), ImColor(255, 0, 0, 255), std::to_string(my_ping).c_str());
+	
 	//change fov function
 	player_controller->STATIC_FOV(vars::quale_menu.fov);
 	//Set name function
@@ -109,6 +118,7 @@ void ESP::Render()
 		float calculate_distnace = distance / 100;
 
 		CG::ACv2_Character_Survival_C* pawn = static_cast<CG::ACv2_Character_Survival_C*>(actor);
+		CG::ACv2_playerController_C* admin = static_cast<CG::ACv2_playerController_C*>(actor);
 
 		static struct
 		{
@@ -143,10 +153,14 @@ void ESP::Render()
 				float* c_player_esp = vars::quale_menu.c_player;
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), c);
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 15), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), std::to_string((int)(calculate_distnace)).c_str());
-				
+
 				if (!player_controller->LineOfSightTo(actor, CG::FVector(), false))
 				{
 					ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 35), ImColor(255, 0, 0, 255), "behind the wall");
+				}
+				if (admin->ServerAdmin)
+				{
+					ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 45), ImColor(0, 255, 0, 255), "server admin");
 				}
 			}
 
@@ -264,7 +278,7 @@ void DeadLootBoxESP::Render()
 			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
 			{
 				float* c_dead_loot_box = vars::quale_menu.c_dead_loot_box;
-				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_dead_loot_box[0], c_dead_loot_box[1], c_dead_loot_box[2], c_dead_loot_box[3]), "Dead Loot Box");
+				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_dead_loot_box[0], c_dead_loot_box[1], c_dead_loot_box[2], c_dead_loot_box[3]), "LootBox");
 			}
 		}
 	}
