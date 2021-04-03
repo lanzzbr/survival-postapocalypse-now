@@ -30,6 +30,7 @@ public:
 	bool loot_esp = false;
 	bool array_actor = false;
 	bool visible = false;
+	
 
 
 	//color variables
@@ -44,6 +45,7 @@ public:
 	//Misc shit
 	float fov = 0.f;
 	const wchar_t string[32] = L"Mantos";
+	float single_player_speed = 3000.f;
 
 	float aim_fov = 2.f;
 	float aim_smooth = 6.f;

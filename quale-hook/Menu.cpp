@@ -68,6 +68,7 @@ void Menu::Render() {
 		case 2:
 			ImGui::SliderFloat("FOV", &fov, 0.f, 170.f);
 			ImGui::Checkbox("SPOOF NAME", &spoof_name);
+			ImGui::SliderFloat("SPEED HACK FOR SINGLE MODE", &single_player_speed, 0.f, 900000.f);
 			break;
 		case 3:
 			ImGui::SetColorEditOptions(ColorEditFlags);

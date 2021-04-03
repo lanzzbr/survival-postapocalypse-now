@@ -75,6 +75,11 @@ void ESP::Render()
 	auto character = controller->Character;
 	if ((character) == nullptr)
 		return;
+	auto char_Movement = character->CharacterMovement;
+	if ((char_Movement) == nullptr)
+		return;
+	char_Movement->MaxWalkSpeed = vars::quale_menu.single_player_speed;
+	char_Movement->MaxWalkSpeed = vars::quale_menu.single_player_speed;
 
 	float ViewportWidth;
 	float ViewportHeight;
