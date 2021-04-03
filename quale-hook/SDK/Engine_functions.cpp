@@ -8965,7 +8965,6 @@ void USceneComponent::STATIC_DetachFromParent(bool bMaintainWorldPosition, bool 
 
 }
 
-
 // Function Engine.PrimitiveComponent.WakeRigidBody
 // (Final, RequiredAPI, BlueprintAuthorityOnly, BlueprintCosmetic, Net, NetReliable, NetRequest, Exec, Native, Event, NetResponse, Static, NetMulticast)
 // Parameters:

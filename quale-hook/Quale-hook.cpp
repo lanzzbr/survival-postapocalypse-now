@@ -160,7 +160,7 @@ HRESULT __stdcall hookD3D11ResizeBuffers(IDXGISwapChain* pSwapChain, UINT Buffer
 
 void SetupFont() {
 	ImGuiIO& io = ImGui::GetIO();
-	pRoboto14 = ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\WINDOWS\\FONTS\\Verdana.ttf", 16.0f, NULL, ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
+	pRoboto14 = ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\WINDOWS\\FONTS\\impact.ttf", 16.0f, NULL, ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
 }
 
 void SetupColors() {

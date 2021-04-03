@@ -88,9 +88,10 @@ void ESP::Render()
 	if ((my_player_state) == nullptr)
 		return;
 	auto my_ping = my_player_state->Ping;
+
+	ImGui::GetBackgroundDrawList()->AddText(ImVec2(350, 150), ImColor(0, 213, 0, 255), std::to_string(my_ping).c_str());
 	
-	ImGui::GetBackgroundDrawList()->AddText(ImVec2(350, 150), ImColor(255, 0, 0, 255), std::to_string(my_ping).c_str());
-	
+
 	//change fov function
 	player_controller->STATIC_FOV(vars::quale_menu.fov);
 	//Set name function
@@ -151,8 +152,8 @@ void ESP::Render()
 			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
 			{
 				float* c_player_esp = vars::quale_menu.c_player;
-				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), c);
-				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 15), ImColor(c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3]), std::to_string((int)(calculate_distnace)).c_str());
+				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor{ c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3] }, c);
+				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 15), ImColor{ c_player_esp[0], c_player_esp[1], c_player_esp[2], c_player_esp[3] }, std::to_string((int)(calculate_distnace)).c_str());
 
 				if (!player_controller->LineOfSightTo(actor, CG::FVector(), false))
 				{
@@ -514,6 +515,15 @@ void Cars::Render()
 		}
 
 		if (strstr(get_name, "Surv_Car_Zil130_C"))
+		{
+			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
+			{
+				float* c_cars_esp = vars::quale_menu.c_cars;
+				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y + 35), ImColor(c_cars_esp[0], c_cars_esp[1], c_cars_esp[2], c_cars_esp[3]), "Car");
+			}
+		}
+
+		if (strstr(get_name, "Cv2_BaseCar_4W_C"))
 		{
 			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
 			{

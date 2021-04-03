@@ -20,6 +20,7 @@ void Menu::Render() {
 	ColorEditFlags |= ImGuiColorEditFlags_NoInputs;
 	ColorEditFlags |= ImGuiColorEditFlags_PickerHueBar;
 	ColorEditFlags |= ImGuiColorEditFlags_Uint8;
+
 	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiCond_FirstUseEver);
 	ImGui::GetStyle().WindowRounding = 0.0f;
 	if (isOpen)
@@ -52,29 +53,29 @@ void Menu::Render() {
 		switch (switchTabs)
 		{
 		case 0:
-			ImGui::SliderFloat("AIMBOT FOV", &vars::quale_menu.aim_fov, 0.f, 15.f);
-			ImGui::SliderFloat("AIM SMOOTH", &vars::quale_menu.aim_smooth, 2.f, 30.f);
-			ImGui::Checkbox("VISIBLE", &vars::quale_menu.visible);
+			ImGui::SliderFloat("AIMBOT FOV", &aim_fov, 0.f, 15.f);
+			ImGui::SliderFloat("AIM SMOOTH", &aim_smooth, 2.f, 30.f);
+			ImGui::Checkbox("VISIBLE", &visible);
 			break;
 		case 1:
-			ImGui::Checkbox("PLAYER", &vars::quale_menu.player_esp);
-			ImGui::Checkbox("ADMINS", &vars::quale_menu.admin_esp);
-			ImGui::Checkbox("AIR DROP", &vars::quale_menu.air_drop);
-			ImGui::Checkbox("DEAD BOX LOOT", &vars::quale_menu.dead_loot_box);
-			ImGui::Checkbox("CAR", &vars::quale_menu.cars);
-			ImGui::Checkbox("GRENADE", &vars::quale_menu.grenade_esp);
+			ImGui::Checkbox("PLAYER", &player_esp);
+			ImGui::Checkbox("ADMINS", &admin_esp);
+			ImGui::Checkbox("AIR DROP", &air_drop);
+			ImGui::Checkbox("DEAD BOX LOOT", &dead_loot_box);
+			ImGui::Checkbox("CAR", &cars);
+			ImGui::Checkbox("GRENADE", &grenade_esp);
 			break;
 		case 2:
-			ImGui::SliderFloat("FOV", &vars::quale_menu.fov, 0.f, 170.f);
-			ImGui::Checkbox("SPOOF NAME", &vars::quale_menu.spoof_name);
+			ImGui::SliderFloat("FOV", &fov, 0.f, 170.f);
+			ImGui::Checkbox("SPOOF NAME", &spoof_name);
 			break;
 		case 3:
 			ImGui::SetColorEditOptions(ColorEditFlags);
-			ImGui::ColorEdit4("PLAYERS", vars::quale_menu.c_player);
-			ImGui::ColorEdit4("AIR DROP", vars::quale_menu.c_air_drop);
-			ImGui::ColorEdit4("DEAD BOX LOOT", vars::quale_menu.c_dead_loot_box);
-			ImGui::ColorEdit4("CAR", vars::quale_menu.c_cars);
-			ImGui::ColorEdit4("GRENADE", vars::quale_menu.c_grenade);
+			ImGui::ColorEdit4("PLAYERS", c_player);
+			ImGui::ColorEdit4("AIR DROP", c_air_drop);
+			ImGui::ColorEdit4("DEAD BOX LOOT", c_dead_loot_box);
+			ImGui::ColorEdit4("CAR", c_cars);
+			ImGui::ColorEdit4("GRENADE", c_grenade);
 			break;
 		}
 		ImGui::End();

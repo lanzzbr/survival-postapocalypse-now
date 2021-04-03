@@ -34,10 +34,10 @@ public:
 
 	//color variables
 	float c_air_drop[4] = { 255, 0, 0, 255 };
-	float c_dead_loot_box[4] = { 54, 228, 228, 255 };
-	float c_cars[4] = { 154, 83, 218, 255 };
-	float c_grenade[4] = { 44, 207, 90, 255 };
-	float c_player[4] = { 225, 230, 51, 255 };
+	float c_dead_loot_box[4] = { 0.227f, 0.979, 0.979, 255 };
+	float c_cars[4] = { 0.692f, 0.378, 0.975, 255 };
+	float c_grenade[4] = { 0.857f, 0.924, 0.179, 255 };
+	float c_player[4] = { 0.563f, 0.992, 0.025, 255 };
 	float c_admin[4] = { 255, 5, 5, 255 };
 
 
