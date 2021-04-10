@@ -1,17 +1,4 @@
 ﻿  ESP.cpp
-  Menu.cpp
-  Quale-hook.cpp
-  BasicHelper.cpp
-  CoreUObject_functions.cpp
-  Engine_functions.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_dx11.cpp
-  imgui_impl_win32.cpp
-  imgui_widgets.cpp
-  vars.cpp
-  Generating Code...
 detours.lib(detours.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(detours.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\detours.pdb'; linking object as if no debug info
 detours.lib(modules.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(modules.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\detours.pdb'; linking object as if no debug info
 detours.lib(disasm.obj) : warning LNK4099: PDB 'detours.pdb' was not found with 'detours.lib(disasm.obj)' or at 'D:\GitHub\survival-postapocalypse-now\quale-hook\x64\Debug\detours.pdb'; linking object as if no debug info

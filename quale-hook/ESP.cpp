@@ -40,6 +40,11 @@ float DistTo(CG::FVector first, CG::FVector second)
 	return sqrt(delta.X * delta.X + delta.Y * delta.Y + delta.Z * delta.Z);
 }
 
+
+enum Bones : int {
+	Head = 6
+};
+
 void ESP::Render()
 {
 	if (!toggled) return;
@@ -92,10 +97,22 @@ void ESP::Render()
 	auto my_player_state = my_pawn->PlayerState;
 	if ((my_player_state) == nullptr)
 		return;
+	CG::ACv2_PlayerState_C* local_state = static_cast<CG::ACv2_PlayerState_C*>(my_player_state);
+
+	local_state->Thirsty = 9000000;
+	local_state->Hungry = 90000000;
+	local_state->HungryUpdateTimer = 0;
+	local_state->Temperature = 36;
+
+	auto game_state = local_state->proxyGameState;
+
+	if (vars::quale_menu.time) {
+		game_state->DayTimeSys->TimeChangeSpeed = 16.f;
+	}
+
 	auto my_ping = my_player_state->Ping;
 
 	ImGui::GetBackgroundDrawList()->AddText(ImVec2(350, 150), ImColor(0, 213, 0, 255), std::to_string(my_ping).c_str());
-	
 
 	//change fov function
 	player_controller->STATIC_FOV(vars::quale_menu.fov);
@@ -125,7 +142,6 @@ void ESP::Render()
 
 		CG::ACv2_Character_Survival_C* pawn = static_cast<CG::ACv2_Character_Survival_C*>(actor);
 		CG::ACv2_playerController_C* admin = static_cast<CG::ACv2_playerController_C*>(actor);
-
 		static struct
 		{
 			CG::AActor* target = nullptr;
@@ -142,18 +158,18 @@ void ESP::Render()
 		{
 			if (is_local_player(actor))
 				continue;
-
+			
 			if ((pawn) == nullptr)
 				continue;
 			auto get_player_state = pawn->PlayerState;
-
+			
 			if ((get_player_state) == nullptr)
 				continue;
-
 			const wchar_t* get_player_name = get_player_state->PlayerName.c_str();
-			
+
 			_bstr_t b(get_player_name);
 			const char* c = b;
+
 			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
 			{
 				float* c_player_esp = vars::quale_menu.c_player;
