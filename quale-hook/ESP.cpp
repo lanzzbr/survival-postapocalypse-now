@@ -99,11 +99,6 @@ void ESP::Render()
 		return;
 	CG::ACv2_PlayerState_C* local_state = static_cast<CG::ACv2_PlayerState_C*>(my_player_state);
 
-	local_state->Thirsty = 9000000;
-	local_state->Hungry = 90000000;
-	local_state->HungryUpdateTimer = 0;
-	local_state->Temperature = 36;
-
 	auto game_state = local_state->proxyGameState;
 
 	if (vars::quale_menu.time) {
@@ -167,6 +162,8 @@ void ESP::Render()
 				continue;
 			const wchar_t* get_player_name = get_player_state->PlayerName.c_str();
 
+			CG::ACv2_PlayerState_C* actor_state = static_cast<CG::ACv2_PlayerState_C*>(get_player_state);
+			
 			_bstr_t b(get_player_name);
 			const char* c = b;
 
@@ -679,6 +676,113 @@ void AirDrop::Render()
 			{
 				float* c_air_drop = vars::quale_menu.c_air_drop;
 				ImGui::GetBackgroundDrawList()->AddText(ImVec2(screen.X, screen.Y), ImColor(c_air_drop[0], c_air_drop[1], c_air_drop[2], c_air_drop[3]), "AIR DROP");
+			}
+		}
+	}
+}
+
+
+PlayerList::PlayerList()
+{
+
+}
+
+void PlayerList::Render()
+{
+	if (!toggled) return;
+
+	get_offsets_for_esp();
+
+	if ((*gh::m_world) == nullptr)
+		return;
+
+	gh::m_persistence_level = (*gh::m_world)->PersistentLevel;
+
+	gh::local_player = (*gh::m_world)->OwningGameInstance->LocalPlayers[0];
+
+	if ((gh::local_player) == nullptr)
+		return;
+
+	auto* player_controller = gh::local_player->PlayerController;
+
+	if ((player_controller) == nullptr)
+		return;
+
+	auto acknowledged_pawn = player_controller->AcknowledgedPawn;
+	if ((acknowledged_pawn) == nullptr)
+		return;
+
+	auto* root_component = acknowledged_pawn->RootComponent;
+	if ((root_component) == nullptr)
+		return;
+
+	CG::FVector2D screen;
+
+	CG::TArray<CG::AActor*> AActors = gh::m_persistence_level->AActors;
+	for (int i = 0; i < AActors.Num(); i++)
+	{
+		CG::AActor* actor = AActors[i];
+		if ((actor) == nullptr)
+			continue;
+		auto root_component_actor = actor->RootComponent;
+		if ((root_component_actor) == nullptr)
+			continue;
+
+		const char* get_name = actor->Name.GetName();
+
+		CG::ACv2_Character_Survival_C* pawn = static_cast<CG::ACv2_Character_Survival_C*>(actor);
+		if (strstr(get_name, "Cv2_Character_Survival_C"))
+		{
+			if ((pawn) == nullptr)
+				continue;
+			auto get_player_state = pawn->PlayerState;
+
+			if ((get_player_state) == nullptr)
+				continue;
+
+			const wchar_t* get_player_name = get_player_state->PlayerName.c_str();
+
+			CG::ACv2_PlayerState_C* actor_state = static_cast<CG::ACv2_PlayerState_C*>(get_player_state);
+
+			_bstr_t S(get_player_name);
+			const char* f = S;
+
+			const wchar_t* SteamID = actor_state->MyUniqNetId.c_str();
+
+			_bstr_t d(SteamID);
+			const char* v = d;
+
+			int KD = actor_state->Kills / actor_state->Deaths;
+			ImGui::SetNextWindowSize(ImVec2(185, 371), ImGuiCond_FirstUseEver);
+			if (ImGui::Begin("Player List Info", &vars::quale_menu.isOpen, ImGuiWindowFlags_NoResize)) {
+				ImGui::Columns(1);
+				ImGui::Separator();
+				ImGui::Separator();
+				ImGui::Text(f);
+				ImGui::Text("STEAM ID");
+				ImGui::Text(v);
+				ImGui::Text("KILLS");
+				ImGui::Text(std::to_string(actor_state->Kills).c_str());
+				ImGui::Text("Deaths");
+				ImGui::Text(std::to_string(actor_state->Deaths).c_str());
+				ImGui::Text("Headshots");
+				ImGui::Text(std::to_string(actor_state->Headshots).c_str());
+				if (actor_state->SAC_SpeedHack)
+				{
+					ImGui::Text("USING SPEEDHACK");
+				}
+				else {
+					ImGui::Text("NO SPEEDHACK");
+				}
+				if (actor_state->AntiCheatOK)
+				{
+					ImGui::Text("NO USING CHEAT");
+				}
+				else {
+					ImGui::Text("CHEATING NOW");
+				}
+				ImGui::Text("K/D ratio");
+				ImGui::Text(std::to_string(KD).c_str());
 			}
 		}
 	}

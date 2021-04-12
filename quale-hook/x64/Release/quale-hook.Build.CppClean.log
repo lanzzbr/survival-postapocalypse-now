@@ -12,11 +12,13 @@ d:\github\survival-postapocalypse-now\quale-hook\x64\release\basichelper.obj
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.obj
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\menu.obj
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\esp.obj
+d:\github\survival-postapocalypse-now\quale-hook\x64\release\coreuobject_structs.obj
+d:\github\survival-postapocalypse-now\quale-hook\x64\release\surv_playerstate_functions.obj
+d:\github\survival-postapocalypse-now\quale-hook\x64\release\cv3_gamemode_functions.obj
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.dll
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.pdb
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.ipdb
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.iobj
-d:\github\survival-postapocalypse-now\quale-hook\x64\release\lootesp.obj
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.tlog\cl.command.1.tlog
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.tlog\cl.read.1.tlog
 d:\github\survival-postapocalypse-now\quale-hook\x64\release\quale-hook.tlog\cl.write.1.tlog

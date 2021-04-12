@@ -25,7 +25,7 @@ void Menu::Render() {
 	ImGui::GetStyle().WindowRounding = 0.0f;
 	if (isOpen)
 	{
-		ImGui::Begin("quale-hook", &isOpen, MenuFlags);
+		ImGui::Begin("quale-hook by MannoLaze", &isOpen, MenuFlags);
 
 		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.65f);
 		ImGui::PushItemWidth(140);
@@ -66,10 +66,11 @@ void Menu::Render() {
 			ImGui::Checkbox("GRENADE", &grenade_esp);
 			break;
 		case 2:
-			ImGui::SliderFloat("FOV", &fov, 0.f, 170.f);
 			ImGui::Checkbox("SPOOF NAME", &spoof_name);
-			ImGui::SliderFloat("SPEED HACK FOR SINGLE MODE", &single_player_speed, 0.f, 900000.f);
+			ImGui::Checkbox("PLAYER LIST", &player_list);
 			ImGui::Checkbox("CHANGE TIME", &time);
+			ImGui::SliderFloat("SPEED HACK FOR SINGLE MODE", &single_player_speed, 0.f, 900000.f);
+			ImGui::SliderFloat("FOV", &fov, 0.f, 170.f);
 			break;
 		case 3:
 			ImGui::SetColorEditOptions(ColorEditFlags);

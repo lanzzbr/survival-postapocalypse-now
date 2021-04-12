@@ -44,3 +44,10 @@ public:
 	bool toggled = false;
 	void Render();
 };
+
+class PlayerList {
+public:
+	PlayerList();
+	bool toggled = false;
+	void Render();
+};

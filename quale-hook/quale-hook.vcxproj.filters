@@ -57,9 +57,6 @@
     <ClCompile Include="ESP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SDK\CoreUObject_structs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SDK\Cv3_GameMode_functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -24,7 +24,6 @@
     <ClCompile Include="Quale-hook.cpp" />
     <ClCompile Include="SDK\BasicHelper.cpp" />
     <ClCompile Include="SDK\CoreUObject_functions.cpp" />
-    <ClCompile Include="SDK\CoreUObject_structs.cpp" />
     <ClCompile Include="SDK\Cv3_GameMode_functions.cpp" />
     <ClCompile Include="SDK\Engine_functions.cpp" />
     <ClCompile Include="Third Party\imgui\imgui.cpp" />

@@ -31,7 +31,7 @@ public:
 	bool array_actor = false;
 	bool visible = false;
 	bool time = false;
-	
+	bool player_list = false;
 
 
 	//color variables

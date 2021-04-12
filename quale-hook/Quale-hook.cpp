@@ -26,6 +26,7 @@ Admin admin = Admin();
 Cars cars = Cars();
 Grenade grenade = Grenade();
 AirDrop airdrop = AirDrop();
+PlayerList player_list = PlayerList();
 //wndproc
 HWND window = nullptr;
 bool ShowMenu = false;
@@ -62,6 +63,7 @@ DWORD WINAPI quale_thread(LPVOID lpvReserved) {
 
 		if (GetAsyncKeyState(menu_key) & 0x1) {
 			vars::quale_menu.isOpen = !(vars::quale_menu.isOpen);
+			
 		}
 
 		if (vars::quale_menu.player_esp)
@@ -111,6 +113,14 @@ DWORD WINAPI quale_thread(LPVOID lpvReserved) {
 		}
 		else {
 			airdrop.toggled = false;
+		}
+
+		if (vars::quale_menu.player_list)
+		{
+			player_list.toggled = true;
+		}
+		else {
+			player_list.toggled = false;
 		}
 	}
 	return NULL;
@@ -258,6 +268,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 		cars = Cars();
 		grenade = Grenade();
 		airdrop = AirDrop();
+		player_list = PlayerList();
 		CreateThread(NULL, 0, quale_thread, NULL, 0, NULL);
 		ImGui::GetIO().ImeWindowHandle = window;
 	}
@@ -288,7 +299,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 	cars.Render();
 	grenade.Render();
 	airdrop.Render();
-
+	player_list.Render();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
