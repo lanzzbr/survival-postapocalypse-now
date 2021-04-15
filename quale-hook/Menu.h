@@ -45,7 +45,7 @@ public:
 
 	//Misc shit
 	float fov = 0.f;
-	const wchar_t string[32] = L"Mantos";
+	const wchar_t string[32] = L"NKT";
 	float single_player_speed = 3000.f;
 
 	float aim_fov = 2.f;

@@ -563,6 +563,8 @@ struct FTransform
 	struct FVector                                     Scale3D;                                                   // 0x0020(0x000C) (Edit, BlueprintVisible, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	unsigned char                                      UnknownData_DTCS[0x4];                                     // 0x002C(0x0004) MISSED OFFSET (PADDING)
 
+	FMatrix ToMatrixWithScale() const;
+
 };
 
 // ScriptStruct CoreUObject.RandomStream

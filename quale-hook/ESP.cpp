@@ -163,9 +163,10 @@ void ESP::Render()
 			const wchar_t* get_player_name = get_player_state->PlayerName.c_str();
 
 			CG::ACv2_PlayerState_C* actor_state = static_cast<CG::ACv2_PlayerState_C*>(get_player_state);
-			
+
 			_bstr_t b(get_player_name);
 			const char* c = b;
+
 
 			if (player_controller->ProjectWorldLocationToScreen(root_component_actor->RelativeLocation, &screen, false))
 			{
